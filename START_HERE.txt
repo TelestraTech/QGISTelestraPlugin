@@ -1,0 +1,62 @@
+EQUIPMENT LIBRARY PLUGIN — PILOT 0.1.0
+
+THIS IS THE APP-WIDE PLUGIN, NOT A QGIS PROJECT TEMPLATE.
+Install once in QField; reuse it across saved local jobs on your iPhone.
+
+INSTALL ONCE
+1. Extract Equipment_Plugin_Install.zip on your Windows computer.
+2. Connect your iPhone and computer to the same Wi-Fi.
+3. Double-click Start_Install_Server.cmd. It prints an Install URL using the computer's Wi-Fi address.
+4. On iPhone, in QField, open Settings > Plugins > Install plugin from URL. Enter that URL. If Windows asks, permit the helper on your private network.
+5. Allow QField to run the plugin and enable Equipment Library (Pilot).
+6. Close the computer's server window after installation. The installed plugin works without it. No per-job computer template step is required.
+
+This helper uses Python, already present on the development computer. If the phone cannot reach its URL (Wi-Fi isolation, firewall, or HTTP restrictions), the alternative is to put equipment-library-v0.1.0.zip on an HTTPS server and use that DIRECT download URL. No public hosting has been created for you. A normal OneDrive/Dropbox preview link is not a direct ZIP endpoint.
+
+USE IN A JOB
+1. Open your existing saved LOCAL job in QField. The plugin does not replace its map.
+2. Tap the EQ toolbar button, or open the plugin's configuration button in Settings > Plugins.
+3. Tap Add Equipment Library to This Job. It creates an independent database beside this job file.
+4. Enter Job ID, choose Equipment type, enter Equipment / vessel ID, and choose Point to measure. Check the displayed code.
+5. Describe the exact physical point being measured. Repeat number, height-reference notes, and other notes are optional.
+6. Connect the Emlid TCP source in QField's positioning settings. Check the source shown in the plugin. Confirm the source is your external rover. The confirmation resets if the selected device changes.
+7. Position the rover correctly over the point. Save Rover Point captures the CURRENT active GNSS position, not the map crosshair. It requires position and height with an observation time within 15 seconds. Require RTK Fixed is on by default; unchecking it deliberately permits other solution qualities.
+8. A Saved CODE for EQUIPMENT message confirms a successful database commit. Collect the next point, changing the point selection and description as appropriate.
+9. Close and reopen the job as a first acceptance check. The equipment layer and points should return while the plugin is enabled.
+
+WHEN STARTING ANOTHER JOB
+Open/create the new local QField job and repeat Add Equipment Library to This Job. It gets its own database. The plugin has the same equipment choices in every job.
+
+WHAT IS STORED
+A file named YourProject.equipment-library.gpkg beside YourProject.qgs/qgz. Its point layer contains a 3D WGS84 point, job/equipment IDs, code/label, measured-point description, repeat number, notes, GNSS observation and save times, fix/quality, available accuracy, source name and configured antenna height. The plugin adds NO additional height correction. The stored elevation is the active GNSS stream height; validate your receiver/QField correction configuration before surveying offsets.
+
+The layer is attached in memory and restored automatically by the plugin when the job loads. The plugin does not rewrite your QGS/QGZ file. Keep the plugin enabled. If disabled, the points remain in the database but the extra layer is not automatically restored. Reopening after toggling the plugin reconnects it safely. If you rename the job project file, keep/rename its .equipment-library.gpkg companion to match or load the database manually.
+
+BACK UP AND SHARE
+Export the complete ACTUAL local job folder from QField, including the .equipment-library.gpkg file. Keep the job project and database together. On a computer, add the database in QGIS to view its equipment_points layer. Job data is never stored inside the installed plugin; reinstalling the plugin should not replace observations. Do not copy another job's populated database into a fresh job.
+
+PILOT SCOPE / LIMITS
+- Three equipment groups and 21 point choices matching the previous collector and the supplied v5 HTML sheet.
+- Trunnion endpoints still have no agreed automatic import codes in the HTML. TRUN is center; PORT/STBD are transverse references.
+- No live HTML-sheet connection or equipment offset calculations yet.
+- No automatic QFieldCloud synchronization for this added layer. Use local jobs for this pilot; cloud/schema synchronization needs separate development and testing.
+- No photos, observation averaging, projected CSV export, or edit/delete UI in this first plugin form. Saved features can be inspected on the map or in QGIS.
+- Stop native editing of the equipment layer before using the plugin to capture, so it can commit immediately.
+- An accepted measurement needs a known coordinate/height setup; the GNSS stream is not necessarily the physical installation point without your measurement procedure.
+
+TEST STATUS
+13 JavaScript behavior tests passed (21 choices, mismatch rejection, validation, stale/no-fix rejection, job separation, no overwrite, reopen, no duplicate, active-edit guard, path handling).
+Actual QML compiled and executed in a Qt 6 compatibility test host. Its selector saved PIN for EX-01 to a REAL 3D GeoPackage using QGIS; clearing/reloading the job restored the observation with one layer. This host substitutes documented QField interfaces; it is not the QField iOS runtime.
+The seed database's empty 3D schema was verified with QGIS. The job database is created with QField's vector writer; it uses the standard point symbol.
+NOT YET TESTED: installation on iPhone, actual QField QML interfaces at runtime, Emlid TCP capture, backgrounding behavior, or cloud projects. Treat this as a pilot for a disposable test job before operational collection.
+
+SOURCES
+https://docs.qfield.org/how-to/advanced-how-tos/plugins/
+https://api.qfield.org/
+https://api.qfield.org/QField/classQfFileUtils/
+https://api.qfield.org/QField/classQfLayerUtils/
+https://api.qfield.org/QField/classQfProjectUtils/
+https://api.qfield.org/QField/classQfFeatureUtils/
+https://api.qfield.org/QField/classQfPositioning/
+
+If installation fails, record your QField version (About QField) and the exact error. If EQ opens but saving fails, copy the status message and relevant QField log entry. These identify whether the device needs a different interface/version adjustment.
